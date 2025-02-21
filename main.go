@@ -254,6 +254,8 @@ func (p *SQLParser) GenerateStruct(outputDir string) (string, error) {
 		builder.WriteString(fmt.Sprintf("func (e *%s) Validate() error {\n", p.SecondStructName))
 		builder.WriteString("\treturn nil\n}\n\n")
 
+		// 生成PO到Entity的转换方法
+		builder.WriteString(fmt.Sprintf("// To%sEntity po to entity\n", p.SecondStructName))
 		builder.WriteString(fmt.Sprintf("func To%sEntity(p *po.%s) (*entity.%s, error) {\n", p.SecondStructName, p.StructName, p.SecondStructName))
 		builder.WriteString(fmt.Sprintf("\treturn entity.New%sBuilder().\n", p.SecondStructName))
 		for _, field := range p.Fields {
@@ -279,6 +281,8 @@ func (p *SQLParser) GenerateStruct(outputDir string) (string, error) {
 		}
 		builder.WriteString("\t\tBuild()\n}\n\n")
 
+		// 生成Entity到PO的转换方法
+		builder.WriteString(fmt.Sprintf("// To%s entity to po\n", p.StructName))
 		builder.WriteString(fmt.Sprintf("func To%s(e *entity.%s) (*po.%s, error) {\n",
 			p.StructName, p.SecondStructName, p.StructName))
 		builder.WriteString(fmt.Sprintf("\treturn &po.%s{\n", p.StructName))
@@ -313,7 +317,8 @@ func (p *SQLParser) GenerateStruct(outputDir string) (string, error) {
 			}
 		}
 		if needTimeFunc {
-			builder.WriteString(`func TimeToNullDateTime(t time.Time) datetime.NullDateTime {
+			builder.WriteString(`// TimeToNullDateTime Time 转成 datetime.NullDateTime
+func TimeToNullDateTime(t time.Time) datetime.NullDateTime {
 	if !t.IsZero() {
 		return datetime.NullDateTime{Time: datetime.NewDateTime(t), Valid: true}
 	}
