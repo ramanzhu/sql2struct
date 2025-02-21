@@ -1,4 +1,4 @@
-module github.com/ramanzhu/sql2struct.git
+module github.com/ramanzhu/sql2struct
 
 go 1.18
 
